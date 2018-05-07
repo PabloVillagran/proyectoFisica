@@ -1,24 +1,42 @@
 var scale = 1;
 var contenedor = null;
 
-var angulo = 90;
+var origen = {
+  x: 0,
+  y: 0
+}
+var angulo = 45;
 var particula = $("#particula");
 var posicionParticula = {
   x: 0,
   y: particula.position().top
 }
-var velocidad = 0.02;
+
+var velocidad = 1;
 var tiempo = 0;
 var velocidadParticula = {
-  vx: velocidad * Math.cos(angulo),
-  vy: - velocidad * Math.sin(angulo)
+  vx: velocidad * Math.cos(angulo * Math.PI / 180),
+  vy: - velocidad * Math.sin(angulo * Math.PI / 180)
 }
 
 var gravedad = 9.8;
 
+function calcularComponentesV(){
+  velocidadParticula = {
+    vx: velocidad * Math.cos(angulo),
+    vy: - velocidad * Math.sin(angulo)
+  }
+}
+
 $(document).ready(function(){
   contenedor = $("#contenedor");
   particula = $("#particula");
+  origen = {
+    x : 0,
+    y : particula.position().top
+  }
+  alert(origen.x + ", " + origen.y);
+  alert(velocidadParticula.vx +", "+ velocidadParticula.vy);
   //populateGrid();
 });
 
@@ -37,26 +55,28 @@ function populateGrid(){
 
 function update(progress) {
   tiempo += progress;
-  velocidadParticula.vx = velocidad * Math.cos(angulo * Math.PI / 180);
-  velocidadParticula.vy = - velocidad * Math.sin(angulo * Math.PI / 180) ;
-  posicionParticula.x = velocidadParticula.vx * tiempo;
-  posicionParticula.y = velocidadParticula.vy * tiempo;
-  console.log(posicionParticula.x+", " + posicionParticula.y);
+  //velocidadParticula.vx = velocidad * Math.cos(angulo * Math.PI / 180);
+  //velocidadParticula.vy = - velocidad * Math.sin(angulo * Math.PI / 180) ;
+  if(posicionParticula.y < origen.y){
+    posicionParticula.x = velocidadParticula.vx * tiempo;
+    posicionParticula.y = posicionParticula.y + (-velocidadParticula.vy * tiempo) + 0.5*gravedad*(tiempo^2);
+    console.log(posicionParticula.x+", " + posicionParticula.y);
+  }else{
+    posicionParticula.y = 0;
+  }
 }
+
+var seconds = 0;
+var el = document.getElementById('seconds-counter');
+
+function incrementSeconds() {
+    seconds += 1;
+    update(seconds);
+    draw();
+}
+
+var cancel = setInterval(incrementSeconds, 500);
 
 function draw() {
-  particula.offset({top: posicionParticula.y, left: posicionParticula.x});
+
 }
-
-function loop(timestamp) {
-  var progress = timestamp - lastRender;
-
-  update(progress);
-  draw();
-
-  lastRender = timestamp;
-  window.requestAnimationFrame(loop);
-}
-
-var lastRender = 0;
-window.requestAnimationFrame(loop);
