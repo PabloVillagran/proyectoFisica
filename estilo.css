@@ -1,0 +1,42 @@
+body{
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+  padding: 10px;
+  margin:0;
+}
+
+#particula{
+  width: 8px;
+  height: 8px;
+  border-radius: 5px;
+  border: solid black 1px;
+  background-color: red;
+  position:absolute;
+  z-index: 1000;
+  bottom:0px;
+  margin-bottom: -5px;
+  margin-left: -5px;
+}
+
+temp{
+  bottom: 0px; /*INDICA POSICION EN Y*/
+  left: 0px; /*INDICA POSICION EN X*/
+
+}
+
+#contenedor {
+    display: block;
+    position: absolute;
+    z-index: 999;
+    width: 100%;
+    height: 80%;
+}
+
+.sector-grid{
+  width: 10px;
+  height: 10px;
+  border: dotted black 1px;
+  display:inline-block;
+  border-collapse: collapse;
+}
