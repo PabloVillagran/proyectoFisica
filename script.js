@@ -1,25 +1,26 @@
 var scale = 1;
 var contenedor = null;
+var run = false;
 
 var origen = {
   x: 0,
   y: 0
 }
-var angulo = 45;
+var angulo = 50;
 var particula = $("#particula");
 var posicionParticula = {
   x: 0,
-  y: particula.position().top
+  y: 0
 }
 
-var velocidad = 1;
+var velocidad = 75;
 var tiempo = 0;
 var velocidadParticula = {
   vx: velocidad * Math.cos(angulo * Math.PI / 180),
-  vy: - velocidad * Math.sin(angulo * Math.PI / 180)
+  vy: velocidad * Math.sin(angulo * Math.PI / 180)
 }
 
-var gravedad = 9.8;
+var gravedad = -9.8;
 
 function calcularComponentesV(){
   velocidadParticula = {
@@ -28,17 +29,24 @@ function calcularComponentesV(){
   }
 }
 
-$(document).ready(function(){
+$(document).ready(start());
+
+function start(){
   contenedor = $("#contenedor");
   particula = $("#particula");
   origen = {
     x : 0,
-    y : particula.position().top
+    y : 0
   }
-  alert(origen.x + ", " + origen.y);
-  alert(velocidadParticula.vx +", "+ velocidadParticula.vy);
+  posicionParticula = {
+    x: 0,
+    y: 0
+  }
+  //alert(origen.x + ", " + origen.y);
+  alert("componentes de velocidad : " + velocidadParticula.vx +", "+ velocidadParticula.vy);
+  run = true;
   //populateGrid();
-});
+}
 
 function populateGrid(){
   var width = contenedor.width();
@@ -54,29 +62,38 @@ function populateGrid(){
 }
 
 function update(progress) {
-  tiempo += progress;
+  tiempo = progress;
   //velocidadParticula.vx = velocidad * Math.cos(angulo * Math.PI / 180);
   //velocidadParticula.vy = - velocidad * Math.sin(angulo * Math.PI / 180) ;
-  if(posicionParticula.y < origen.y){
-    posicionParticula.x = velocidadParticula.vx * tiempo;
-    posicionParticula.y = posicionParticula.y + (-velocidadParticula.vy * tiempo) + 0.5*gravedad*(tiempo^2);
+  //if(posicionParticula.y < origen.y)
+  {
     console.log(posicionParticula.x+", " + posicionParticula.y);
-  }else{
-    posicionParticula.y = 0;
+    posicionParticula.x = velocidadParticula.vx * tiempo;
+    posicionParticula.y = origen.y + (velocidadParticula.vy * tiempo) + 0.5*gravedad*(Math.pow(tiempo , 2));
+  }
+  //else
+  {
+  //  posicionParticula.y = origen.y;
   }
 }
 
-var seconds = 0;
-var el = document.getElementById('seconds-counter');
+function draw() {
+  //alert(posicionParticula.x + "," + posicionParticula.y);
+  particula.css({
+    "bottom" : posicionParticula.y+"px",
+    "left": posicionParticula.x+"px"
+  });
+}
 
+var seconds = 0;
 function incrementSeconds() {
-    seconds += 1;
+  if(run){
     update(seconds);
     draw();
+    seconds += 0.06;
+  }else{
+    seconds = 0;
+  }
 }
 
-var cancel = setInterval(incrementSeconds, 500);
-
-function draw() {
-
-}
+var cancel = setInterval(incrementSeconds, 1);
