@@ -124,20 +124,19 @@ $("#cambiarEscala").click(cambioEscala);
 function cambioEscala(){
   var nuevaEscala = displayScale.val().replace(/[^0-9.,]/g,'');//captura el valor de la escala sin tomar en cuenta las letras.
   if(nuevaEscala==""){
-    nuevaEscala = scale;
+    nuevaEscala = scale; // si el campo de escala esta vacío toma la ultima escala ingresada
   }else{
-    scale = parseFloat(nuevaEscala);
+    scale = parseFloat(nuevaEscala); //transforma el texto en decimal y lo asigna a la escala
   }
-  $(".axis.izq").children("li").each(function(){
+  $(".axis.izq").children("li").each(function(){//recorre todos los puntos de referencia para Y. actualiza según la escala
     var id = parseInt(this.id.replace(/\D/g,''));
     this.innerText = 100 * (id+1) * scale;
   });
-  $(".axis.inf").children("span").each(function(){
+  $(".axis.inf").children("span").each(function(){//recorre todos los puntos de referencia para X. actualiza según la escala
     var id = parseInt(this.id.replace(/\D/g,''));
     this.innerText = 100 * (id+1) * scale;
   });
-  reset();
-  //alert(scale);
+  reset();//reinicia la aplicación con la nueva escala.
 }
 
 var seconds = 0;
