@@ -1,6 +1,6 @@
 /////////////////////////////CONFIGURACIONES///////////////////////////////////////
 ﻿var speed = 60; //velocidad con la que se muestra la animación
-var scale = 1; //escala
+var scale = 0.5; //escala
 var contenedor = null; //marco de referencia
 var run = false; //indica si la animación esta activa o no
 var ORIGEN = {
@@ -26,6 +26,10 @@ var posicionParticula = { //posicion calculada de la particula según el tiempo
   x: 0,
   y: 0
 }
+var coordenadasAnimacion = {
+  x:0,
+  y:0
+}
 var posicionInicial = {
   x:0,
   y:0
@@ -47,6 +51,7 @@ function calcularComponentesV(){
 
 $(document).ready(function(){
   start();
+  cambioEscala();
 });
 
 function start(){
@@ -66,15 +71,16 @@ function start(){
     x: posicionInicial.x,
     y: posicionInicial.y
   };//regresa la particula a su posicion inicial
-
-  //alert("componentes de velocidad : " + velocidadParticula.vx +", "+ velocidadParticula.vy);
-  run = true;//permite la ejecucion de la animación
-  //fixGrid();
+  coordenadasAnimacion = {
+    x: posicionInicial.x,
+    y: posicionInicial.y
+  };
 }
 
 function reset(){//función para reiniciar la animación
   seconds = 0;
   start();
+  run = true;
 }
 
 function update(tiempo) { //se calcula la siguiente posición de la particula segun el tiempo
@@ -87,6 +93,8 @@ function update(tiempo) { //se calcula la siguiente posición de la particula se
     console.log(posicionParticula.x+", " + posicionParticula.y);
     posicionParticula.x = redondear(velocidadParticula.vx * tiempo);
     posicionParticula.y = redondear(posicionInicial.y + (velocidadParticula.vy * tiempo) + 0.5*gravedad*(Math.pow(tiempo , 2)));
+    coordenadasAnimacion.x = posicionParticula.x / scale;
+    coordenadasAnimacion.y = posicionParticula.y / scale;
   }
 //  else
   if(posicionParticula.y<ORIGEN.y)
@@ -97,8 +105,8 @@ function update(tiempo) { //se calcula la siguiente posición de la particula se
 
 function draw() {
   particula.css({
-    "bottom" : posicionParticula.y+"px",
-    "left": posicionParticula.x+"px"
+    "bottom" : coordenadasAnimacion.y+"px",
+    "left": coordenadasAnimacion.x+"px"
   });// se actualiza en pantalla la posicion de la particula
   displayTiempo.val(seconds);//se actualiza la visualizacion del tiempo
   displayGravedad.val(gravedad);//se actualiza el campo de gravedad
@@ -112,6 +120,26 @@ function draw() {
   displaySpeed.val(speed);//se actualiza el input de velocidad de animación
 }
 
+$("#cambiarEscala").click(cambioEscala);
+function cambioEscala(){
+  var nuevaEscala = displayScale.val().replace(/[^0-9.,]/g,'');//captura el valor de la escala sin tomar en cuenta las letras.
+  if(nuevaEscala==""){
+    nuevaEscala = scale;
+  }else{
+    scale = parseFloat(nuevaEscala);
+  }
+  $(".axis.izq").children("li").each(function(){
+    var id = parseInt(this.id.replace(/\D/g,''));
+    this.innerText = 100 * (id+1) * scale;
+  });
+  $(".axis.inf").children("span").each(function(){
+    var id = parseInt(this.id.replace(/\D/g,''));
+    this.innerText = 100 * (id+1) * scale;
+  });
+  reset();
+  //alert(scale);
+}
+
 var seconds = 0;
 function incrementSeconds() {//logica de animación
   if(run){
@@ -120,7 +148,7 @@ function incrementSeconds() {//logica de animación
     seconds += 0.06;//0.06 = cantidad de "frames" por milisegundo... REVISAR
     seconds = redondear(seconds); //Redondear a 2 decimales
   }else{
-    reset();//reinicia la animación
+    //reset();//reinicia la animación
   }
 }
 var anim = setInterval(incrementSeconds, speed);//Intervalo para calcular posicion de particula
