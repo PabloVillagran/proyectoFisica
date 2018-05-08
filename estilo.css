@@ -1,9 +1,15 @@
 body{
   height: 100%;
   width: 100%;
-  overflow: hidden;
-  padding: 10px;
+  overflow: scroll;
   margin:0;
+}
+
+#entorno{
+  padding:5px;
+  border-bottom: 3px solid green;
+  position:absolute;
+  height:70%;
 }
 
 #particula{
@@ -27,13 +33,29 @@ temp{
 
 #contenedor {
     display: block;
-    position: absolute;
+    position: relative;
     z-index: 999;
     width: 100%;
-    height: 80%;
-    border:solid black 1px;
-    border-top:none;
-    border-right:none;
+    height: 100%;
+    margin-left:20px;
+}
+
+#infoContainer{
+  display:block;
+  position:absolute;
+  bottom:0px;
+  width:50%;
+  margin-bottom:15px;
+}
+
+.info{
+  display:inline-block;
+  width:45%;
+  text-align: right;
+}
+
+.info input{
+  float:right;
 }
 
 .sector-grid{
@@ -42,4 +64,35 @@ temp{
   border: dotted black 1px;
   display:inline-block;
   border-collapse: collapse;
+}
+
+.axis {
+    position: absolute;
+    display: inline-block;
+    left: 0px;
+    padding: 0px;
+    width:30px;
+    list-style: none;
+}
+
+.axis.izq{
+  bottom:0px;
+}
+
+.axis.izq > li{
+  margin:80px 0px;
+  text-align: center;
+}
+
+.axis.inf{
+  width:2000px;
+  height:30px;
+  margin:0 25px;
+}
+
+.axis.inf span {
+    width: 16px !important;
+    text-align: center;
+    margin-left: 85px;
+    display: inline-block;
 }
