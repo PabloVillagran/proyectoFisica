@@ -45,7 +45,10 @@ function calcularComponentesV(){
   }
 }
 
-$(document).ready(start());
+$(document).ready(function(){
+  start();
+});
+
 function start(){
   contenedor = $("#contenedor");//captura el div contenedor
   particula = $("#particula");//captura el div particula
@@ -105,7 +108,7 @@ function draw() {
   displayVy.val(velocidadParticula.vy);//se actualiza el input componente de velocidad en y
   displayX.val(posicionParticula.x);//se actualiza el input de posicion en x
   displayY.val(posicionParticula.y);//se actualiza el input de posicion en y
-  displayScale.val(scale);//se actualiza el input de escala
+  displayScale.val(scale + "m.");//se actualiza el input de escala
   displaySpeed.val(speed);//se actualiza el input de velocidad de animación
 }
 
