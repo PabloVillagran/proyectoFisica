@@ -103,3 +103,16 @@ temp{
   position:relative;
   float:top;
 }
+
+.ghost-display{
+  width: 8px;
+  height: 8px;
+  border-radius: 5px;
+  border: solid black 1px;
+  position:absolute;
+  z-index: 999;
+  bottom:0px;
+  margin-bottom: -5px;
+  margin-left: -5px;
+  background-color:#00f;
+}

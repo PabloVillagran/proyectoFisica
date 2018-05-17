@@ -1,6 +1,6 @@
 /////////////////////////////CONFIGURACIONES///////////////////////////////////////
 ﻿var speed = 60; //velocidad con la que se muestra la animación
-var scale = 0.5; //escala
+var scale = 1; //escala
 var contenedor = null; //marco de referencia
 var run = false; //indica si la animación esta activa o no
 var ORIGEN = {
@@ -35,12 +35,15 @@ var posicionInicial = {
   y:0
 }//posicion inicial de la particula. Se debe poder modificar en formulario.
 
-var velocidad = 50;//magnitud del vector de velocidad
+var velocidad = 100;//magnitud del vector de velocidad
 var angulo = 45;//angulo del vector velocidad
 var tiempo = 0;//tiempo inicial
-var velocidadParticula = calcularComponentesV();
+var velocidadParticula = null;
 
 var gravedad = -9.8;//la gravedad inicial es de 9.8. se puede modificar en el formulario
+
+var porcentajeVy = 0;//relacion entre la velocidad inicial y la velocidad actual de la particula
+var ghostActual = 0;
 
 function calcularComponentesV(){
   return {
@@ -75,6 +78,10 @@ function start(){
     x: posicionInicial.x,
     y: posicionInicial.y
   };
+  velocidadParticula = calcularComponentesV();
+  porcentajeVy = 100;
+  ghostActual = 100;
+  $(".ghost-display").remove();
 }
 
 function reset(){//función para reiniciar la animación
@@ -90,13 +97,16 @@ function update(tiempo) { //se calcula la siguiente posición de la particula se
     gravedad = -9.8;
   }
   {
-    console.log(posicionParticula.x+", " + posicionParticula.y);
+    //console.log(posicionParticula.x+", " + posicionParticula.y);
     posicionParticula.x = redondear(velocidadParticula.vx * tiempo);
-    posicionParticula.y = redondear(posicionInicial.y + (velocidadParticula.vy * tiempo) + 0.5*gravedad*(Math.pow(tiempo , 2)));
+    posicionParticula.y = redondear(posicionInicial.y + redondear(velocidadParticula.vy * tiempo) + 0.5*gravedad*(Math.pow(tiempo , 2)));
     coordenadasAnimacion.x = posicionParticula.x / scale;
     coordenadasAnimacion.y = posicionParticula.y / scale;
   }
-//  else
+
+  var velocidadYactual = velocidadParticula.vy - (gravedad * tiempo);
+  porcentajeVy = ~~((velocidadYactual/velocidadParticula.vy)*100);
+
   if(posicionParticula.y<ORIGEN.y)
   {
     run = false;
@@ -118,6 +128,15 @@ function draw() {
   displayY.val(posicionParticula.y);//se actualiza el input de posicion en y
   displayScale.val(scale + "m.");//se actualiza el input de escala
   displaySpeed.val(speed);//se actualiza el input de velocidad de animación
+  if(!(porcentajeVy%ghostActual)){
+    drawGhost(coordenadasAnimacion.x, coordenadasAnimacion.y);
+    ghostActual+=10;
+  }
+  console.log(porcentajeVy+"% de la velocidad, "+ ghostActual + " ghostActual");
+}
+
+function drawGhost(x, y){
+  contenedor.append("<div style='bottom:"+y+"px; left:"+x+"px;' class='ghost-display'></div>");
 }
 
 $("#cambiarEscala").click(cambioEscala);
@@ -139,6 +158,20 @@ function cambioEscala(){
   reset();//reinicia la aplicación con la nueva escala.
 }
 
+$("#cambiarVelocidad").click(cambioVelocidad);
+function cambioVelocidad(){
+  var nuevaVelocidad = displayVelocidad.val().replace(/[^0-9.,]/g,'');//captura el valor en el campo de velocidad
+  var nuevoAngulo = displayAngulo.val().replace(/[^0-9.,]/g,'');//captura el valor en el campo del angulo.
+  velocidad = nuevaVelocidad;
+  angulo = nuevoAngulo;
+  reset();
+}
+
+$("#pausar").click(pausar);
+function pausar(){
+  run = !run;
+}
+
 var seconds = 0;
 function incrementSeconds() {//logica de animación
   if(run){
@@ -153,5 +186,6 @@ function incrementSeconds() {//logica de animación
 var anim = setInterval(incrementSeconds, speed);//Intervalo para calcular posicion de particula
 
 function redondear(x){//funcion para redondear a 2 decimales
-  return Math.round(x*100)/100;
+  //return x.toFixed(5);
+  return Math.round(x*100000000)/100000000;
 }
